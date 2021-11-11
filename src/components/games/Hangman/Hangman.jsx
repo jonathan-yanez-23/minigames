@@ -27,12 +27,13 @@ function Hangman(props) {
         // 1. escoger una palabra
         
         let randomPosition = Math.floor(1 + Math.random() * (14 - 1));
-        setSelectedWord(WORD_LIST[randomPosition].split('')); // Array de letras
-        console.log("startPlay > WORD_LIST[random]: "+WORD_LIST[randomPosition]);
-        console.log("SELECTED WORD: "+selectedWord);
+        let chosenWord = WORD_LIST[randomPosition]
+        setSelectedWord(chosenWord.split('')); // Array de letras
+        console.log("startPlay > WORD_LIST[random]: "+chosenWord);
+        
 
         // Establecer los valores del resto de estados
-        setHangLetters(selectedWord.map(() => "_")); // Palabras en blanco
+        setHangLetters(chosenWord.split('').map(() => "_")); // Palabras en blanco
         setTries(10); 
         setAvailableLetters("ABCDEFGHIJKLMNÑOPQRSTUVWXYZ".split(''));
         setFailLetters([]);
