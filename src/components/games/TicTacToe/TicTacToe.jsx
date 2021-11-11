@@ -1,65 +1,44 @@
-import { useEffect, useReducer } from "react";
+import { useEffect, useState } from "react";
 import Box from "./Box/Box";
 import "./TicTacToe.css";
 
-const initialState = {
-    turn: "X",
-    isStarted: false,
-    boxes: [[null,null,null],[null,null,null],[null,null,null]]
-}
 // Action types para reutilizarlos
-const SET_TURN = "SET_TURN";
-const SET_ISSTARTED = "SET_ISSTARTED";
-const SET_BOXES = "SET_BOXES"
-
-// Configurar reducer -> Recibe un state y un action, siempre
-const reducer = (state, action) => {
-    // Action contiene el type y el nuevo valor en payload
-    const {type, payload} = action;
-    //Dependiendo del type, se configura un valor u otro
-    switch(type) {
-        case SET_TURN:
-            return {...state, turn: payload};
-        case SET_ISSTARTED:
-            return {...state, isStarted: !state.isStarted}; // Cambiar un booleano consiste en negar su anterior estado
-        case SET_BOXES:
-            return {...state, boxes: payload};
-        default:
-            return state;
-    }
-}
 
 
-function TicTacToe(props) {
-    const [state, dispatch] = useReducer(reducer, initialState);    
+
+function TicTacToe(props) {  
+    const [turn, setTurn] = useState("X"); // Turno de X por defecto
+    const [isStarted, setIsStarted] = useState(false) // La partida aun no ha comenzado
+    const [boxes, setBoxes] = useState([[null,null,null],[null,null,null],[null,null,null]]);
 
     // Controlar cambios de estado de boxes
-
     useEffect(() => {
         // comprobar si la partida ha comenzado
-        if (!state.isStarted) {
+        if (!isStarted) {
+            console.log("partida no comenzada");
             return;
         }
 
+
         // 1. Comprobar si hay ganador (se mira el turno anterior)
-        const posibleWinner = (state.turn === "X") ? "Y" : "X";
+        const posibleWinner = (turn === "X") ? "Y" : "X";
         let result = false;
         // Comprobar primera fila
-        result = result || [posibleWinner,posibleWinner,posibleWinner].join("")  === state.boxes[0].join("");
+        result = result || [posibleWinner,posibleWinner,posibleWinner].join("")  === boxes[0].join("");
         // Comprobar segunda fila
-        result = result || [posibleWinner,posibleWinner,posibleWinner].join("")  === state.boxes[1].join("");
+        result = result || [posibleWinner,posibleWinner,posibleWinner].join("")  === boxes[1].join("");
         // Comprobar tercera fila
-        result = result || [posibleWinner,posibleWinner,posibleWinner].join("")  === state.boxes[2].join("");
+        result = result || [posibleWinner,posibleWinner,posibleWinner].join("")  === boxes[2].join("");
         // Check columna 1
-        result = result || [posibleWinner,posibleWinner,posibleWinner].join("")  === state.boxes.map(row => row[0]).join("");
+        result = result || [posibleWinner,posibleWinner,posibleWinner].join("")  === boxes.map(row => row[0]).join("");
         // Check columan 2
-        result = result || [posibleWinner,posibleWinner,posibleWinner].join("")  === state.boxes.map(row => row[1]).join("");
+        result = result || [posibleWinner,posibleWinner,posibleWinner].join("")  === boxes.map(row => row[1]).join("");
         // Check columna 3
-        result = result || [posibleWinner,posibleWinner,posibleWinner].join("")  === state.boxes.map(row => row[2]).join("");
+        result = result || [posibleWinner,posibleWinner,posibleWinner].join("")  === boxes.map(row => row[2]).join("");
         //Check diagonal 1
-        result = result || [posibleWinner,posibleWinner,posibleWinner].join("") === [state.boxes[0][0],state.boxes[1][1],state.boxes[2][2]].join("");
+        result = result || [posibleWinner,posibleWinner,posibleWinner].join("") === [boxes[0][0],boxes[1][1],boxes[2][2]].join("");
         //Check diagonal 2
-        result = result || [posibleWinner,posibleWinner,posibleWinner].join("") === [state.boxes[0][2],state.boxes[1][1],state.boxes[2][0]].join("");
+        result = result || [posibleWinner,posibleWinner,posibleWinner].join("") === [boxes[0][2],boxes[1][1],boxes[2][0]].join("");
 
         if(result) { // Hay un ganador
             alert("EL GANADOR ES: "+posibleWinner);
@@ -68,58 +47,76 @@ function TicTacToe(props) {
         }
 
         // 2. Si todas las casillas estan llenas, se termina el juego
-        let isNullsInRows = state.boxes.map(row => row.includes(null));
-        if(isNullsInRows.includes(true)){
+        let isNullsInRows = boxes.map(row => row.includes(null));
+        if(!isNullsInRows.includes(true)){
             alert("LAS CASILLAS ESTAN LLENAS Y NO HAY GANADOR");
             // Resetear el juego
         }
-    }, [state.boxes]);
+    }, [boxes]);
     
+
     const handleBoxInsert = function(row, column) {
         let rowNumber = parseInt(row);
         let columnNumber = parseInt(column);
-        console.log(state);
-        if (!state.boxes[rowNumber][columnNumber]){
-            state.boxes[rowNumber][columnNumber] = state.turn;
-            // llamo al dispatch para modificar la caja
-            dispatch({
-                type: SET_BOXES,
-                payload: state.boxes[rowNumber][columnNumber] = state.turn
-            });
-
-            // llamo a dispatch para modificar el turno
-            dispatch({
-                type: SET_TURN,
-                payload: (state.turn === "X") ? "Y": "X"
-            })
-
+        if (!boxes[rowNumber][columnNumber]){
+            boxes[rowNumber][columnNumber] = turn;
+            // modifico la caja con su funcion
+            setBoxes([...boxes])
+        
+            // modifico el turno con su funcion
+            setTurn( (turn=="X") ? "Y": "X");
+            
         } else {
             console.log("NO SE PUEDE LLENAR ESTA CASILLA");
         }
     }
 
+    const initPlay = function() {
+        setIsStarted(true);
+        // Resetear todo
+    }
 
+    const stopPlay = function() {
+        setIsStarted(false);
+        // Resetear todo
+    }
 
     return (
         <div className="tictactoe">
             <h1>TICTACTOE GAME</h1>
+            {(!isStarted) ? (
+                <button className="controlButton" onClick={initPlay}>
+                    COMENZAR PARTIDA
+                </button>
+            ): null}
+
             <div className="matrixBoxes">
                 <div className="row1">
-                    <Box handleBoxInsert={handleBoxInsert} turn={state.turn} rowbox={"0"} colbox={"0"} ></Box>
-                    <Box handleBoxInsert={handleBoxInsert} turn={state.turn} rowbox={"0"} colbox={"1"}></Box>
-                    <Box handleBoxInsert={handleBoxInsert} turn={state.turn} rowbox={"0"} colbox={"2"}></Box>
+                    <Box isStarted={isStarted} handleBoxInsert={handleBoxInsert} turn={turn} rowbox={"0"} colbox={"0"} ></Box>
+                    <Box isStarted={isStarted} handleBoxInsert={handleBoxInsert} turn={turn} rowbox={"0"} colbox={"1"}></Box>
+                    <Box isStarted={isStarted} handleBoxInsert={handleBoxInsert} turn={turn} rowbox={"0"} colbox={"2"}></Box>
                 </div>
                 <div className="row2">
-                    <Box handleBoxInsert={handleBoxInsert} turn={state.turn} rowbox={"1"} colbox={"0"}></Box>
-                    <Box handleBoxInsert={handleBoxInsert} turn={state.turn} rowbox={"1"} colbox={"1"}></Box>
-                    <Box handleBoxInsert={handleBoxInsert} turn={state.turn} rowbox={"1"} colbox={"2"}></Box>
+                    <Box isStarted={isStarted} handleBoxInsert={handleBoxInsert} turn={turn} rowbox={"1"} colbox={"0"}></Box>
+                    <Box isStarted={isStarted} handleBoxInsert={handleBoxInsert} turn={turn} rowbox={"1"} colbox={"1"}></Box>
+                    <Box isStarted={isStarted} handleBoxInsert={handleBoxInsert} turn={turn} rowbox={"1"} colbox={"2"}></Box>
                 </div>
                 <div className="row3">
-                    <Box handleBoxInsert={handleBoxInsert} turn={state.turn} rowbox={"2"} colbox={"0"}></Box>
-                    <Box handleBoxInsert={handleBoxInsert} turn={state.turn} rowbox={"2"} colbox={"1"}></Box>
-                    <Box handleBoxInsert={handleBoxInsert} turn={state.turn} rowbox={"2"} colbox={"2"}></Box>
+                    <Box isStarted={isStarted} handleBoxInsert={handleBoxInsert} turn={turn} rowbox={"2"} colbox={"0"}></Box>
+                    <Box isStarted={isStarted} handleBoxInsert={handleBoxInsert} turn={turn} rowbox={"2"} colbox={"1"}></Box>
+                    <Box isStarted={isStarted} handleBoxInsert={handleBoxInsert} turn={turn} rowbox={"2"} colbox={"2"}></Box>
                 </div>
             </div>
+
+            {(isStarted) ? (
+                <button className="controlButton" onClick={stopPlay}>
+                    PARAR PARTIDA
+                </button>
+            ): null}
+
+            {(isStarted) ? (
+                <p>Turno de {turn}</p>
+            ): null}
         </div>
     );
 }

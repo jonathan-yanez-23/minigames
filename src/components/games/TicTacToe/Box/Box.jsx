@@ -6,10 +6,13 @@ function Box(props) {
     const [state, setState] = useState({boxValue: null});
     const onClickEvent = function(e){
 
+        if(!props.isStarted){
+            alert("AUN NO HAS COMENZADO LA PARTIDA");
+            return;
+        }
         // coordenadas
         let row = props.rowbox; 
         let col = props.colbox; 
-        console.log(props.turn);
         // compruebo si la casilla esta marcada
         if(state.boxValue != null){
             console.log("CASILLA MARCADA");
