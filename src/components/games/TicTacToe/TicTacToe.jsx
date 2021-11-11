@@ -41,7 +41,8 @@ function TicTacToe(props) {
         result = result || [posibleWinner,posibleWinner,posibleWinner].join("") === [boxes[0][2],boxes[1][1],boxes[2][0]].join("");
 
         if(result) { // Hay un ganador
-            alert("EL GANADOR ES: "+posibleWinner);
+            alert("EL GANADOR ES: "+posibleWinner+"\n pulsa en PARAR PARTIDA para limpiar la caja");
+
             // Resetear el juego
             return;
         }
@@ -49,8 +50,9 @@ function TicTacToe(props) {
         // 2. Si todas las casillas estan llenas, se termina el juego
         let isNullsInRows = boxes.map(row => row.includes(null));
         if(!isNullsInRows.includes(true)){
-            alert("LAS CASILLAS ESTAN LLENAS Y NO HAY GANADOR");
+            alert("LAS CASILLAS ESTAN LLENAS Y NO HAY GANADOR.");
             // Resetear el juego
+            window.location.reload();
         }
     }, [boxes]);
     
@@ -76,9 +78,11 @@ function TicTacToe(props) {
         // Resetear todo
     }
 
+
+    // Recarga la partida (mas facil hacerlo asi)
     const stopPlay = function() {
         setIsStarted(false);
-        // Resetear todo
+        window.location.reload();
     }
 
     return (
