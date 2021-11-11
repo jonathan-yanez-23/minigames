@@ -43,10 +43,18 @@ function Hangman(props) {
 
     // Funcion click para las letras, cada vez que se pulse una, se elimina
     const onClickAvaLetter = (e) => {
-        if(tries == 0){
+        if(selectedWord == []){
+            alert("DALE A START PLAY");
+            return;
+        } else if(hangLetters.join('') == selectedWord.join('')){
+            alert("DALE START PLAY");
+            return;
+        }else if(tries == 0){
             alert("NO HAY MAS INTENTOS, INICIA DE NUEVO PARA JUGAR CON OTRA PALABRA");
             return;
-        }
+        } 
+        
+    
         // Reducir en 1 los intentos.
         setTries(tries - 1);
         // Capturar la letra
