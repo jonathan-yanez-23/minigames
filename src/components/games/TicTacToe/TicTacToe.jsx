@@ -16,7 +16,6 @@ const SET_BOXES = "SET_BOXES"
 const reducer = (state, action) => {
     // Action contiene el type y el nuevo valor en payload
     const {type, payload} = action;
-
     //Dependiendo del type, se configura un valor u otro
     switch(type) {
         case SET_TURN:
@@ -37,6 +36,11 @@ function TicTacToe(props) {
     // Controlar cambios de estado de boxes
 
     useEffect(() => {
+        // comprobar si la partida ha comenzado
+        if (!state.isStarted) {
+            return;
+        }
+
         // 1. Comprobar si hay ganador (se mira el turno anterior)
         const posibleWinner = (state.turn === "X") ? "Y" : "X";
         let result = false;
@@ -72,8 +76,23 @@ function TicTacToe(props) {
     }, [state.boxes]);
     
     const handleBoxInsert = function(row, column) {
-        if (!state.boxes[row][column]){
-            state.boxes[row][column] = state.turn;
+        let rowNumber = parseInt(row);
+        let columnNumber = parseInt(column);
+        console.log(state);
+        if (!state.boxes[rowNumber][columnNumber]){
+            state.boxes[rowNumber][columnNumber] = state.turn;
+            // llamo al dispatch para modificar la caja
+            dispatch({
+                type: SET_BOXES,
+                payload: state.boxes[rowNumber][columnNumber] = state.turn
+            });
+
+            // llamo a dispatch para modificar el turno
+            dispatch({
+                type: SET_TURN,
+                payload: (state.turn === "X") ? "Y": "X"
+            })
+
         } else {
             console.log("NO SE PUEDE LLENAR ESTA CASILLA");
         }
@@ -86,19 +105,19 @@ function TicTacToe(props) {
             <h1>TICTACTOE GAME</h1>
             <div className="matrixBoxes">
                 <div className="row1">
-                    <Box rowbox={"0"} colbox={"0"}></Box>
-                    <Box rowbox={"0"} colbox={"1"}></Box>
-                    <Box rowbox={"0"} colbox={"2"}></Box>
+                    <Box handleBoxInsert={handleBoxInsert} turn={state.turn} rowbox={"0"} colbox={"0"} ></Box>
+                    <Box handleBoxInsert={handleBoxInsert} turn={state.turn} rowbox={"0"} colbox={"1"}></Box>
+                    <Box handleBoxInsert={handleBoxInsert} turn={state.turn} rowbox={"0"} colbox={"2"}></Box>
                 </div>
                 <div className="row2">
-                    <Box rowbox={"1"} colbox={"0"}></Box>
-                    <Box rowbox={"1"} colbox={"1"}></Box>
-                    <Box rowbox={"1"} colbox={"2"}></Box>
+                    <Box handleBoxInsert={handleBoxInsert} turn={state.turn} rowbox={"1"} colbox={"0"}></Box>
+                    <Box handleBoxInsert={handleBoxInsert} turn={state.turn} rowbox={"1"} colbox={"1"}></Box>
+                    <Box handleBoxInsert={handleBoxInsert} turn={state.turn} rowbox={"1"} colbox={"2"}></Box>
                 </div>
                 <div className="row3">
-                    <Box rowbox={"2"} colbox={"0"}></Box>
-                    <Box rowbox={"2"} colbox={"1"}></Box>
-                    <Box rowbox={"2"} colbox={"2"}></Box>
+                    <Box handleBoxInsert={handleBoxInsert} turn={state.turn} rowbox={"2"} colbox={"0"}></Box>
+                    <Box handleBoxInsert={handleBoxInsert} turn={state.turn} rowbox={"2"} colbox={"1"}></Box>
+                    <Box handleBoxInsert={handleBoxInsert} turn={state.turn} rowbox={"2"} colbox={"2"}></Box>
                 </div>
             </div>
         </div>
