@@ -25,11 +25,12 @@ function Hangman(props) {
     const startPlay = () => {
         // Resetea todo 
         // 1. escoger una palabra
-        let getRandomIntj = (min, max) => {
-            return Math.floor(Math.random() * (max - min)) + min;
-        }
-        setSelectedWord(WORD_LIST[getRandomIntj(0, WORD_LIST.length - 1)].split('')); // Array de letras
+        
+        let randomPosition = Math.floor(1 + Math.random() * (14 - 1));
+        setSelectedWord(WORD_LIST[randomPosition].split('')); // Array de letras
+        console.log("startPlay > WORD_LIST[random]: "+WORD_LIST[randomPosition]);
         console.log("SELECTED WORD: "+selectedWord);
+
         // Establecer los valores del resto de estados
         setHangLetters(selectedWord.map(() => "_")); // Palabras en blanco
         setTries(10); 
@@ -63,7 +64,7 @@ function Hangman(props) {
             }
         });
 
-        console.log(hangLetters)
+        console.log("onClickAvaLetters>HANGLETTERS: "+ hangLetters)
 
         // Si la letra ha sido correcta, se modifica el hangLetters con su setter y se sale de esta funcion
         if(inside) {
