@@ -6,12 +6,11 @@ function Home () {
         <div>
             <h1>BIENVENIDOS A MINIJUEGOS</h1>
             <div>
-                <a href="/tictactoe">TIC TAC TOE</a>
+                <Link to="/tictactoe">TIC TAC TOE</Link>
             </div>
             <div>
-                <a href="/hangout">HANGOUT</a>
+                <Link to="/hangman">HANGOUT</Link>
             </div>
-
             <div>
                 <Link to="/sudoku">SUDOKU</Link>
             </div>
